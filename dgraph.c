@@ -38,6 +38,9 @@ int main(int argc,char *argv[]) {
     noecho();
     cbreak();
     nodelay(stdscr,true);
+    int my = getmaxy(stdscr);
+    int mx = getmaxx(stdscr);
+    long graph[mx+5];
     while (true)
     {
         struct statfs data;
@@ -56,15 +59,18 @@ int main(int argc,char *argv[]) {
         char __ulx[MAXINFOSIZE];
         snprintf(__ulx,MAXINFOSIZE,"Used Space: %ld bytes",used);
         mvaddstr(1,0,__ulx);
+        char __flx[MAXINFOSIZE];
+        snprintf(__flx,MAXINFOSIZE,"Free Space: %ld bytes",freespace);
+        mvaddstr(2,0,__flx);
+
+
         int ch = getch();
         if (ch == KEY_F(10)) {
             break;
         }
-        //free(__tlx);
-        //free(__ulx);
-        //struct timespec __wait;
-        //__wait.tv_nsec = 100000;
-        //nanosleep(&__wait,&__wait);
+        struct timespec __wait;
+        __wait.tv_nsec = 100000;
+        nanosleep(&__wait,&__wait);
     }
 
     reset_shell_mode();//Un-init screen
