@@ -65,7 +65,10 @@ int main(int argc,char *argv[]) {
     nodelay(stdscr,true);
     int my = getmaxy(stdscr);
     int mx = getmaxx(stdscr);
-    long graph[mx+5];
+    long graph[mx+1];
+    for (int l = 0;l > mx+1;l++) {
+        graph[l] = 0;
+    }
     long diff = 0;
     long totaldiff = 0;
     char tick = 0;
@@ -75,6 +78,9 @@ int main(int argc,char *argv[]) {
     long totalsize;
     long freespace;
     long used;
+    int maxy;
+    int miny;
+    
     while (true)
     {
         tick++;
@@ -95,6 +101,20 @@ int main(int argc,char *argv[]) {
             ofs = freespace;
         }
 
+        //get maximum and minimum graph values
+        int tmin = graph[0];
+        int tmax = graph[0];
+        for (int __i = 1;__i < mx+1;__i++) {
+            if (graph[__i] > tmax) {
+                tmax = graph[__i];
+            }
+            if (graph[__i] < tmin) {
+                tmin = graph[__i];
+            }
+        }
+        maxy = tmax;
+        miny = tmin;
+
         //Print text info to screen
 
         char __tlx[MAXINFOSIZE];
@@ -113,6 +133,9 @@ int main(int argc,char *argv[]) {
         char __tdiff[MAXINFOSIZE];
         snprintf(__tdiff,MAXINFOSIZE,"Net Change: %s",parse_size(totaldiff));
         mvaddstr(1,MAXINFOSIZE,__tdiff);
+        char __maxmin[MAXINFOSIZE];
+        snprintf(__maxmin,MAXINFOSIZE,"+ %ld - %ld",parse_size((long)maxy),parse_size((long)miny));
+        mvaddstr(2,MAXINFOSIZE,__maxmin);
 
         //Debug data
         char __ticks[10];
@@ -121,11 +144,18 @@ int main(int argc,char *argv[]) {
         //End Debug Data
 
         //Compare data
+        int xdiff;
         if (freespace < ofs) {
             diff += -(ofs - freespace);
+            xdiff = (ofs - freespace);
         } else {
-            diff += freespace - ofs;
+            diff += (freespace - ofs);
+            xdiff = (freespace - ofs);
         }
+        for (int i = 1;i < mx;i++) {
+            graph[i-1] = graph[i];
+        }
+        graph[mx] = xdiff;
         
         //Check keys
 
