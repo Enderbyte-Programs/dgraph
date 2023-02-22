@@ -71,6 +71,10 @@ int main(int argc,char *argv[]) {
     char tick = 0;
     long ftick = 0;
     long ofs;
+    long blocksize;
+    long totalsize;
+    long freespace;
+    long used;
     while (true)
     {
         tick++;
@@ -78,14 +82,15 @@ int main(int argc,char *argv[]) {
         
         if (tick == 10) {
             tick = 0;
+            totaldiff += diff;
             diff = 0;
         }
         struct statfs data;
         statfs(argv[0],&data);
-        long blocksize = data.f_bsize;
-        long totalsize = data.f_blocks*blocksize;
-        long freespace = data.f_bavail*blocksize;
-        long used = totalsize - freespace;
+        blocksize = data.f_bsize;
+        totalsize = data.f_blocks*blocksize;
+        freespace = data.f_bavail*blocksize;
+        used = totalsize - freespace;
         if (ftick == 1) {
             ofs = freespace;
         }
@@ -118,10 +123,8 @@ int main(int argc,char *argv[]) {
         //Compare data
         if (freespace < ofs) {
             diff += -(ofs - freespace);
-            totaldiff += -(ofs - freespace);
         } else {
             diff += freespace - ofs;
-            totaldiff += freespace - ofs;
         }
         
         //Check keys
